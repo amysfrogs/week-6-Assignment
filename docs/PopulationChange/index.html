@@ -97,7 +97,7 @@
                 .projection(d3.geoMercator()
                 .fitSize([page_dims.width - margin, page_dims.height - margin], geojson))
             //color scaling
-            var colorInterpolator = d3.interpolateRgbBasis(["blue", "turquoise", "forestgreen", "darkviolet", "firebrick"])
+            var colorInterpolator = d3.interpolateRgbBasis(["blue", "turquoise", "green", "purple"])
             
             //find min and max values from both years to use in domain for Scales
             const pop_min = d3.min(geojson.features, (d) => {
