@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset = "UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
+        <script src="../libs/d3.js"></script>
+        <script src="https://d3js.org/topojson.v1.min.js"></script>
+        <title>MA Map</title>
+        <style>
+            body{
+                text-align: center;
+                margin: auto;
+                font-family: sans-serif;
+            }
+            #tooltip {
+                position: absolute;
+                opacity: 0;
+                top: 0;
+                left: 0;
+                width: auto;
+                padding: 10px;
+                background: white;
+                font-family: sans-serif;
+                font-size: medium;
+                border-radius: 2px;
+                line-height: 1;
+            }
+            path {
+                stroke-width: 0.5px;
+                stroke: black;
+            }
+            path:hover {
+                opacity: 0.6;
+                stroke: black;
+                stroke-width: 4px;
+            }
+            #details {
+                position: absolute;
+                margin: 10px;
+                opacity: 0;
+                top: 0;
+                right: 0;
+                width: 150px;
+                height: auto;
+                padding: 10px;
+                background: azure;
+                font-family: sans-serif;
+                font-size: medium;
+                border-radius: 2px;
+                line-height: 1;
+                border: 1px solid #000;
+            }
+            svg {
+                margin: auto;
+                width: 90%;
+                padding: 10px;
+                text-align: center;
+
+            }
+
+        </style>
+    </head>
+
+    <body>
+    <div id = "tooltip"></div>
+    <div id = "details"></div>
+    <h1>
+        Massachusetts Counties
+    </h1>
+    <h3>
+        Amy Westell
+    </h3>
+    
+    <script>
+        //set page dimensions
+        const page_dims = {
+            width: window.innerWidth,
+            height: window.innerHeight
+        };
+        const margin = page_dims.width * 0.2
+        //create constant to store data location
+        const MA_counties = "../data/towns.topojson"
+        //open file
+        Promise.all([
+            d3.json(MA_counties)
+        ]).then(data => {
+            const topo_data = data[0];
+            //convert topology data to geojson
+            const geojson = topojson.feature(topo_data, topo_data.objects.ma);
+
+        }
+    </script>
+    </body>
+</html>

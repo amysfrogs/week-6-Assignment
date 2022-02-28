@@ -128,7 +128,7 @@
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
-                //.attr("fill", d => colorInterpolator(logScale((d['properties']['POP2010'] - d['properties']['POP2000']))))
+                //.attr("fill", d => colorInterpolator(logScale((d['properties']['POP2010'] - d['properties']['POP2000'])))) //can't use a log scale with part of the range being negative
                 .attr("fill", d => colorInterpolator(linearScale((d['properties']['POP2010'] - d['properties']['POP2000']))))
                 .on("mouseenter", (m, d) => {
                     tooltip.transition()
