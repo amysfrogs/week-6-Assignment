@@ -57,18 +57,18 @@
         // a topojson file containing population of each town in different years
         const MA_counties = "./data/towns.topojson"
             // gini index per county
-        const gini_index = "./data/gini_index.csv"
+        //const gini_index = "./data/gini_index.csv"
 
 
         // open both files
         Promise.all([
             d3.json(MA_counties),
-            d3.csv(gini_index)
+            //d3.csv(gini_index)
         ]).then(data => {
             // topology data
             const topo_data = data[0];
             // gini index data
-            const csv_data = data[1];
+            //const csv_data = data[1];
 
             /*-------------------------------------------------------*/
             /*-----------------Topojson data handling----------------*/
@@ -130,7 +130,7 @@
                 .attr("width", "100vw")
                 .attr("height", "100vh");
 
-            svg.selectAll("path")
+                svg.selectAll("path")
                 .data(geojson.features)
                 .enter()
                 .append("path")
