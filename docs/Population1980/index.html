@@ -4,7 +4,11 @@
         <meta charset = "UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
+<<<<<<< HEAD
         <script src="https://d3js.org/d3.v7.min.js"></script>
+=======
+        <script src="../libs/d3.js"></script>
+>>>>>>> ad33905de29aaf8f2b46008466e65c82970bbf88
         <script src="https://d3js.org/topojson.v1.min.js"></script>
         <title>MA Pop 1980</title>
         <style>
@@ -80,7 +84,7 @@
         };
         const margin = page_dims.width * 0.2
         //create constant to store data location
-        const MA_counties = "./data/towns.topojson"
+        const MA_counties = "../data/towns.topojson"
         //open file
         Promise.all([
             d3.json(MA_counties)
