@@ -4,9 +4,9 @@
         <meta charset = "UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
-        <script src="../libs/d3.js"></script>
+        <script src="/libs/d3.js"></script>
         <script src="https://d3js.org/topojson.v1.min.js"></script>
-        <title>MA Map</title>
+        <title>MA Counties</title>
         <style>
             body{
                 text-align: center;
@@ -27,7 +27,7 @@
                 line-height: 1;
             }
             path {
-                stroke-width: 0.5px;
+                stroke-width: 0;
                 stroke: black;
             }
             path:hover {
@@ -80,7 +80,23 @@
         };
         const margin = page_dims.width * 0.2
         //create constant to store data location
-        const MA_counties = "../data/towns.topojson"
+        const MA_counties = "/data/towns.topojson"
+        const county_names = {
+                            "25001": "Barnstable",
+                            "25003": "Berkshire",
+                            "25005": "Bristol",
+                            "25007": "Dukes",
+                            "25009": "Essex",
+                            "25011": "Franklin",
+                            "25013": "Hampden",
+                            "25015": "Hampshire",
+                            "25017": "Middlesex",
+                            "25019": "Nantucket",
+                            "25021": "Norfolk",
+                            "25023": "Plymouth",
+                            "25025": "Suffolk",
+                            "25027": "Worcester"
+                            }
         //open file
         Promise.all([
             d3.json(MA_counties)
@@ -89,7 +105,60 @@
             //convert topology data to geojson
             const geojson = topojson.feature(topo_data, topo_data.objects.ma);
 
-        }
+            //create geoPath generator
+            const geoPath_generator = d3.geoPath()
+                .projection(d3.geoMercator()
+                .fitSize([page_dims.width - margin, page_dims.height - margin], geojson))
+            //color scaling
+            var colorInterpolator = d3.interpolateRgbBasis(["blue","darkgreen", "purple","firebrick"])
+            
+            //linear scale
+            let linearScale = d3.scaleLinear()
+                .domain(d3.extent(geojson.features, (d) => {
+                    return d['properties']['FIPS_STCO']
+                }))
+
+            //create tooltip
+            const tooltip = d3.select("#tooltip");
+            const details = d3.select("#details");
+            //append SVG
+           let svg = d3.select("body").append("svg")
+                .attr("width", "100vw")
+                .attr("height", "100vh");
+                //add path for the boundaries
+                svg.selectAll("path")
+                .data(geojson.features)
+                .enter()
+                .append("path")
+                .attr("d", d => geoPath_generator(d))
+                .attr("fill", d => colorInterpolator(linearScale(d['properties']['FIPS_STCO'])))
+                .on("mouseenter", (m, d) => {
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", 0.9)
+                    tooltip.html(d['properties']['FIPS_STCO'])
+                        .style("left", m.clientX + "px")
+                        .style("top", m.clientY + "px")
+                    details.transition()
+                        .duration(200)
+                        .style("opacity", 0.9)
+                    details.html("<div>County: </div>" + 
+                                "<div>" + d['properties']['FIPS_STCO'] + "</div>"  
+                    );
+                })
+                .on("mousemove", (m, d) => {
+                    tooltip.style("opacity", 0.9)
+                    details.style("opacity", 0.9)
+                })
+                .on("mouseout", (m, d) => {
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", 0)
+                    details.transition()
+                        .duration(200)
+                        .style("opacity", 0)
+                })
+        })
     </script>
     </body>
 </html>
