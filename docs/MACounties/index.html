@@ -81,27 +81,18 @@
         const margin = page_dims.width * 0.2
         //create constant to store data location
         const MA_counties = "../data/towns.topojson"
-        const county_names = {
-                            "25001": "Barnstable",
-                            "25003": "Berkshire",
-                            "25005": "Bristol",
-                            "25007": "Dukes",
-                            "25009": "Essex",
-                            "25011": "Franklin",
-                            "25013": "Hampden",
-                            "25015": "Hampshire",
-                            "25017": "Middlesex",
-                            "25019": "Nantucket",
-                            "25021": "Norfolk",
-                            "25023": "Plymouth",
-                            "25025": "Suffolk",
-                            "25027": "Worcester"
-                            }
+        const county_names = "../data/MA_COUNTY_CODES.csv"
+        
         //open file
         Promise.all([
-            d3.json(MA_counties)
+            d3.json(MA_counties),
+            d3.csv(county_names)
         ]).then(data => {
             const topo_data = data[0];
+            const name_data = data[1];
+
+            
+            
             //convert topology data to geojson
             const geojson = topojson.feature(topo_data, topo_data.objects.ma);
 
@@ -118,11 +109,23 @@
                     return d['properties']['FIPS_STCO']
                 }))
 
+            let townsByCounty = d3.group(geojson.features, (d) => d['properties']['FIPS_STCO'])
+
+            /*let newGeo = geojson.features.forEach(val => {
+                let {properties} = val
+                let newProps = name_data['COUNTY']
+                val.properties = {...properties, ...newProps}
+            })*/
+            
+            console.log(townsByCounty)
+
+            
+
             //create tooltip
             const tooltip = d3.select("#tooltip");
             const details = d3.select("#details");
             //append SVG
-           let svg = d3.select("body").append("svg")
+           /*let svg = d3.select("body").append("svg")
                 .attr("width", "100vw")
                 .attr("height", "100vh");
                 //add path for the boundaries
@@ -144,6 +147,45 @@
                         .style("opacity", 0.9)
                     details.html("<div>County: </div>" + 
                                 "<div>" + d['properties']['FIPS_STCO'] + "</div>"  
+                    );
+                })
+                .on("mousemove", (m, d) => {
+                    tooltip.style("opacity", 0.9)
+                    details.style("opacity", 0.9)
+                })
+                .on("mouseout", (m, d) => {
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", 0)
+                    details.transition()
+                        .duration(200)
+                        .style("opacity", 0)
+                })*/
+
+                let svg = d3.select("body").append("svg")
+                .attr("width", "100vw")
+                .attr("height", "100vh");
+                //add path for the boundaries
+                svg.selectAll("path")
+                .data(townsByCounty.get(25001))
+                .enter()
+                .append("path")
+                .attr("d", d => geoPath_generator(d))
+                .attr("fill", d => colorInterpolator(1/14))
+                .attr("class", "Barnstable")
+                .on("mouseenter", (m, d) => {
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", 0.9)
+                    tooltip.html("Barnstable")
+                        .style("left", m.clientX + "px")
+                        .style("top", m.clientY + "px")
+                    details.transition()
+                        .duration(200)
+                        .style("opacity", 0.9)
+                    details.html("<div>County: </div>" + 
+                                "<div>Barnstable</div>" 
+                            
                     );
                 })
                 .on("mousemove", (m, d) => {

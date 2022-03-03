@@ -99,21 +99,16 @@
             //color scaling
             var colorInterpolator = d3.interpolateRgbBasis(["blue", "turquoise", "green", "purple"])
             
-            //find min and max values from both years to use in domain for Scales
-            const pop_min = d3.min(geojson.features, (d) => {
-                    return (d['properties']['POP2010'] - d['properties']['POP2000'])
-                })
-            const pop_max = d3.max(geojson.features, (d) => {
-                    return (d['properties']['POP2010'] - d['properties']['POP2000'])
-                })
-            const pop_min_max = [pop_min, pop_max];
-            
             //if data is scaled using a log scale
             let logScale = d3.scaleLog()
-                .domain([pop_min_max])
+                .domain(d3.extent(geojson.features, (d) => {
+                    return d['properties']['POPCH00_10']
+                }))
             //if data is scaled using a linear scale
             let linearScale = d3.scaleLinear()
-                .domain(pop_min_max)
+                .domain(d3.extent(geojson.features, (d) => {
+                    return d['properties']['POPCH00_10']
+                }))
 
             //create tooltip
             const tooltip = d3.select("#tooltip");
@@ -128,8 +123,8 @@
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
-                //.attr("fill", d => colorInterpolator(logScale((d['properties']['POP2010'] - d['properties']['POP2000'])))) //can't use a log scale with part of the range being negative
-                .attr("fill", d => colorInterpolator(linearScale((d['properties']['POP2010'] - d['properties']['POP2000']))))
+                //.attr("fill", d => colorInterpolator(logScale(d['properties']['POPCH00_10'])))
+                .attr("fill", d => colorInterpolator(linearScale(d['properties']['POPCH00_10'])))
                 .on("mouseenter", (m, d) => {
                     tooltip.transition()
                         .duration(200)
@@ -147,7 +142,7 @@
                                 "<div>Population in 2010: </div>" + 
                                 "<div>" + d['properties']['POP2010'] + "</div>" +
                                 "<div>Difference: </div>" + 
-                                "<div>" + (d['properties']['POP2010'] - d['properties']['POP2000']) + "</div>"  
+                                "<div>" + d['properties']['POPCH00_10'] + "</div>"  
                     );
                 })
                 .on("mousemove", (m, d) => {
