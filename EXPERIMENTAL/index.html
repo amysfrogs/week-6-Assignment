@@ -106,7 +106,7 @@
 
             //create groupings county level values
             columnsToSum = ["POP1980", "POP1990", "POP2000", "POP2010", "SUM_ACRES"];
-            let townsByCounty = d3.group(geojson.features, (d) => d['properties']['FIPS_STCO']);
+            //let townsByCounty = d3.flatGroup(geojson.features, (d) => d['properties']['FIPS_STCO']);
             let popsByCounty = d3.rollup(geojson.features, 
                                         v => Object.fromEntries(columnsToSum.map(col => 
                                         [col, d3.sum(v, d => +d['properties'][col])])), 
@@ -120,10 +120,9 @@
                 .attr("width", "100vw")
                 .attr("height", "100vh");
                 //add path for the boundaries
-                //done separately for each county
                 //Barnstable 25001
                 svg.selectAll("path")
-                .data(townsByCounty.get(25001))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25001))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -161,7 +160,7 @@
                 })
                 .on("mouseout", (m, d) => {
                     d3.selectAll("path").attr("fill", d => {                        
-                        if(d['properties']['FIPS_STCO'] == '25001') {
+                            if(d['properties']['FIPS_STCO'] == '25001') {
                                 return d =>colorInterpolator(linearScale(d['properties']['FIPS_STCO']))
                             }})
                     tooltip.transition()
@@ -173,7 +172,7 @@
                 }),
                 //Berkshire 25003
                 svg.selectAll("path")
-                .data(townsByCounty.get(25003))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25003))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -223,7 +222,7 @@
                 }),
                 //Bristol 25005
                 svg.selectAll("path")
-                .data(townsByCounty.get(25005))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25005))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -273,7 +272,7 @@
                 }),
                 //Dukes 25007
                 svg.selectAll("path")
-                .data(townsByCounty.get(25007))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25007))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -323,7 +322,7 @@
                 }),
                 //Essex 25009
                 svg.selectAll("path")
-                .data(townsByCounty.get(25009))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25009))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -373,7 +372,7 @@
                 }),
                 //Franklin 25011
                 svg.selectAll("path")
-                .data(townsByCounty.get(25011))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25011))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -423,7 +422,7 @@
                 }),
                 //Hampden 25013
                 svg.selectAll("path")
-                .data(townsByCounty.get(25013))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25013))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -473,7 +472,7 @@
                 }),
                 //Hampshire 25015
                 svg.selectAll("path")
-                .data(townsByCounty.get(25015))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25015))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -523,7 +522,7 @@
                 }),
                 //Middlesex 25017
                 svg.selectAll("path")
-                .data(townsByCounty.get(25017))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25017))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -573,7 +572,7 @@
                 }),
                 //Nantucket 25019
                 svg.selectAll("path")
-                .data(townsByCounty.get(25019))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25019))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -623,7 +622,7 @@
                 }),
                 //Norfolk 25021
                 svg.selectAll("path")
-                .data(townsByCounty.get(25021))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25021))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -673,7 +672,7 @@
                 }),
                 //Plymouth 25023
                 svg.selectAll("path")
-                .data(townsByCounty.get(25023))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25023))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -723,7 +722,7 @@
                 }),
                 //Suffolk 25025
                 svg.selectAll("path")
-                .data(townsByCounty.get(25025))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25025))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -773,7 +772,7 @@
                 }),
                 //Worcester 25027
                 svg.selectAll("path")
-                .data(townsByCounty.get(25027))
+                .data(geojson.features.filter(d => d['properties']['FIPS_STCO'] == 25027))
                 .enter()
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
@@ -814,6 +813,40 @@
                             if(d['properties']['FIPS_STCO'] == '25027') {
                                 return d =>colorInterpolator(linearScale(d['properties']['FIPS_STCO']))
                             }})
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", 0)
+                    details.transition()
+                        .duration(200)
+                        .style("opacity", 0)
+                }),
+                svg.selectAll("path")
+                .data(geojson.features)
+                .enter()
+                .append("path")
+                .attr("d", d => geoPath_generator(d))
+                .attr("fill", d => colorInterpolator(linearScale(d['properties']['FIPS_STCO'])))
+                .on("mouseenter", (m, d) => {
+                    tooltip.transition()
+                        .duration(200)
+                        .style("opacity", 0.9)
+                    tooltip.html(d['properties']['TOWN'])
+                        .style("left", m.clientX + "px")
+                        .style("top", m.clientY + "px")
+                    details.transition()
+                        .duration(200)
+                        .style("opacity", 0.9)
+                    details.html("<div>Town: </div>" + 
+                                "<div>" + d['properties']['TOWN'] + "</div>" +
+                                "<div>Population: </div>" + 
+                                "<div>" + d['properties']['POP1980'] + "</div>"  
+                    );
+                })
+                .on("mousemove", (m, d) => {
+                    tooltip.style("opacity", 0.9)
+                    details.style("opacity", 0.9)
+                })
+                .on("mouseout", (m, d) => {
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", 0)
