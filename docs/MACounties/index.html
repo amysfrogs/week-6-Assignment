@@ -81,12 +81,16 @@
         const margin = page_dims.width * 0.2
         //create constant to store data location
         const MA_counties = "../data/towns.topojson"
+        const county_names = "../data/MA_COUNTY_CODES.csv"
         
         //open file
         Promise.all([
-            d3.json(MA_counties)
+            d3.json(MA_counties), 
+            d3.csv(county_names)
         ]).then(data => {
             const topo_data = data[0];
+            const name_data = data[1];
+            console.log(name_data)
 
             //convert topology data to geojson
             const geojson = topojson.feature(topo_data, topo_data.objects.ma);
@@ -106,12 +110,12 @@
 
             //create groupings county level values
             columnsToSum = ["POP1980", "POP1990", "POP2000", "POP2010", "SUM_ACRES"];
-            let townsByCounty = d3.group(geojson.features, (d) => d['properties']['FIPS_STCO']);
             let popsByCounty = d3.rollup(geojson.features, 
                                         v => Object.fromEntries(columnsToSum.map(col => 
                                         [col, d3.sum(v, d => +d['properties'][col])])), 
                                                         d => d['properties']['FIPS_STCO']);
             
+
             //create tooltip
             const tooltip = d3.select("#tooltip");
             const details = d3.select("#details");
@@ -120,8 +124,6 @@
                 .attr("width", "100vw")
                 .attr("height", "100vh");
                 //add path for the boundaries
-                //done separately for each county
-                //Barnstable 25001
                 svg.selectAll("path")
                 .data(geojson.features)
                 .enter()
@@ -129,13 +131,16 @@
                 .attr("d", d => geoPath_generator(d))
                 .attr("fill", d => colorInterpolator(linearScale(d['properties']['FIPS_STCO'])))
                 .on("mouseenter", (m, d) => {
+                    currentCounty = d['properties']['FIPS_STCO']
+                    countyName = name_data.find(o => o.FIPS_STCO == currentCounty).COUNTY
                     d3.selectAll("path").attr("fill", d => {                        
-                            if(d['properties']['FIPS_STCO'] == '25001') {
+                            if(d['properties']['FIPS_STCO'] == currentCounty) {
                                 return "yellow"
                             }
                             else { 
-                                return d =>colorInterpolator(linearScale(d['properties']['FIPS_STCO']))
-                            }}) 
+                                return colorInterpolator(linearScale(d['properties']['FIPS_STCO']))
+                            }
+                        })
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", 0.9)
@@ -146,11 +151,11 @@
                         .duration(200)
                         .style("opacity", 0.9)
                     details.html("<div>County: </div>" + 
-                                "<div>Barnstable</div>" +
+                                "<div>" + countyName + "</div>" +
                                 "<div>Population in 1980:</div>" +
-                                "<div>" + popsByCounty.get(25001)['POP1980'] + "</div>" +
+                                "<div>" + popsByCounty.get(currentCounty)['POP1980'].toLocaleString() + "</div>" +
                                 "<div>Population in 2010:</div>" +
-                                "<div>" + popsByCounty.get(25001)['POP2010'] + "</div>" 
+                                "<div>" + popsByCounty.get(currentCounty)['POP2010'].toLocaleString() + "</div>" 
                             
                     );
                 })
@@ -160,9 +165,12 @@
                 })
                 .on("mouseout", (m, d) => {
                     d3.selectAll("path").attr("fill", d => {                        
-                        if(d['properties']['FIPS_STCO'] == '25001') {
-                                return d =>colorInterpolator(linearScale(d['properties']['FIPS_STCO']))
-                            }})
+                        if(d['properties']['FIPS_STCO'] == currentCounty) {
+                                return colorInterpolator(linearScale(d['properties']['FIPS_STCO']))
+                            }
+                        else{
+                            return colorInterpolator(linearScale(d['properties']['FIPS_STCO']))
+                        }})
                     tooltip.transition()
                         .duration(200)
                         .style("opacity", 0)
